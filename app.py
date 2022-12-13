@@ -3,11 +3,20 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import json
 import os
+from flask_mail import Mail, Message
 
 cred = credentials.Certificate("secrets.json")
 fa = firebase_admin.initialize_app(cred)
 db = firestore.client()
 app = Flask(__name__)
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_ID')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PWD')
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 @app.route("/fetchdata/<roomID>/<apiKey>")
 def fetchData(roomID, apiKey):
@@ -48,5 +57,3 @@ def removePresence(roomID, apiKey):
 
 if __name__ == '__main__':
     app.run()
-
-
