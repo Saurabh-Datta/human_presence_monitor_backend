@@ -55,5 +55,46 @@ def removePresence(roomID, apiKey):
     except:
         return "error"
 
+@app.route("/switchon/<roomID>/<apiKey>")
+def turnOnDevices(roomID, apiKey):
+    try:
+        if(apiKey != os.getenv('API_KEY')):
+            return "Unauthenticated"
+        collection = db.collection('rooms')
+        doc = collection.document(roomID)
+        doc.update({'devices':True})
+        return "done"
+    except:
+        return "error"
+
+@app.route("/switchoff/<roomID>/<apiKey>")
+def turnOffDevices(roomID, apiKey):
+    try:
+        if(apiKey != os.getenv('API_KEY')):
+            return "Unauthenticated"
+        collection = db.collection('rooms')
+        doc = collection.document(roomID)
+        doc.update({'devices':False})
+        return "done"
+    except:
+        return "error"
+
+@app.route("/fetchautomation/<roomID>/<apiKey>")
+def fetchAutomation(roomID, apiKey):
+    try:
+        if(apiKey != os.getenv('API_KEY')):
+            return "Unauthenticated"
+        collection = db.collection('rooms')
+        doc = collection.document(roomID)
+        room = doc.get()
+        if room.exists:
+            if (room.to_dict()['automation']):
+                automation = "on"
+            else:
+                automation = "off"
+            return automation
+    except:
+        return "error"
+
 if __name__ == '__main__':
     app.run()
